@@ -7,7 +7,15 @@ console.log("Background working")
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete') {
         console.log('Refreshed the page')
-        utils.test()
+        utils.print(words)
+
+        for (const i in words) {
+            // key -> i
+            // value -> words[i]
+
+            // Run the find and replace function with that word
+            console.log(words[i])
+        }
     }
 })
 

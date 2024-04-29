@@ -1,1 +1,9 @@
 Figure out exactly how exports and modules work.
+
+Implement word replace
+
+Create popup interface
+    -> design mockup for what it should do
+
+Check if word replace works with Arabic (god help us if not)
+
