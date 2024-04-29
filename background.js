@@ -1,6 +1,7 @@
 import {utils} from "./content.js"
 const url = chrome.runtime.getURL('freqList.json')
-let words;
+let words
+let freqCutoff
 
 console.log("Background working")
 
@@ -18,6 +19,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
     }
 })
+
+/* window.addEventListener('freqChange', function(event) {
+    freqCutoff = event.detail.freqCutoff
+    console.log("Frequency cutoff changed:", freqCutoff)
+}) */
+
+chrome.runtime.onMessage.addListener(
+    function(request) {
+        freqCutoff = request.data
+        console.log("Recieved event appropriately")
+    }
+)
 
 async function fetchData() {
     try{
