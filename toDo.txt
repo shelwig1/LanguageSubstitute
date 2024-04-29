@@ -7,3 +7,8 @@ Create popup interface
 
 Check if word replace works with Arabic (god help us if not)
 
+Useful links:
+https://developer.chrome.com/docs/extensions/develop/ui/add-popup
+
+https://developer.chrome.com/docs/extensions/develop/ui#popups
+
