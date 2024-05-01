@@ -1,4 +1,6 @@
-import {utils} from "./content.js"
+//import {utils} from "./content.js"
+//import {start} from './content.js'
+
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
@@ -6,25 +8,23 @@ let freqCutoff
 console.log("Background working")
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete') {
-        console.log('Refreshed the page')
-        utils.print(words)
+    /* if (tab.url?.startsWith("chrome://")) {
+        console.log("Starts with chrome, can't do it")
+        return undefined;
+    } */
+    //console.log("Got past the chrome URL")
 
-        for (const i in words) {
-            // key -> i
-            // value -> words[i]
-
-            // Run the find and replace function with that word
-            console.log(words[i])
-        }
+    if (tab.active && changeInfo.status === 'complete') {
+        //console.log('Tried to run other script')
+        chrome.scripting.executeScript({
+            target: {tabId : tab.id},
+            files: ['content.js']
+        })
     }
+
 })
 
-/* window.addEventListener('freqChange', function(event) {
-    freqCutoff = event.detail.freqCutoff
-    console.log("Frequency cutoff changed:", freqCutoff)
-}) */
-
+// Handles word frequency getting updated from the UI
 chrome.runtime.onMessage.addListener(
     function(request) {
         freqCutoff = request.data

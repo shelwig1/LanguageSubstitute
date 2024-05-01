@@ -17,3 +17,13 @@ iterate through the entire article and add the words to a hashmap
 If those words show up on the english side of the deal, then we know and can quickly look it up
 
 We're actually doing that either way aren't we...
+
+
+Current OBJ:
+
+readFileText.js
+    -Format the incoming JSON stuff correctly so we can then:
+        Pass it into google translate without worrying about the readFile fucking up the API calls
+
+
+I don't need to do this cache UP FRONT, but I can implement it as we go forward

@@ -2,6 +2,13 @@
     "manifest_version": 3,
     "name": "Language Substituter",
     "version": "0.1.0",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
     "background": {
         "service_worker": "background.js",
         "type": "module"
@@ -10,8 +17,7 @@
         {
             "matches": ["<all_urls>"],
             "js": ["content.js"],
-            "type":"module",
-            "css": ["styles.css"]
+            "type":"module"
         }
     ],
     "web_accessible_resources": [
