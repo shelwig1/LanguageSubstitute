@@ -1,6 +1,7 @@
 //import {utils} from "./content.js"
 //import {start} from './content.js'
 
+
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff

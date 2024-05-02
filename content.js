@@ -1,58 +1,75 @@
-console.log("Content script is working")
+
+const sentenceRegex = /[.!?]+/
+const wordRegex = /\s/
+let FREQUENCY = 10
+
+// Replacing words vs replacing sentences
 
 replaceText(document.body)
 
 function replaceText (element) {
-    if (element.hasChildNodes()) {
-        element.childNodes.forEach(replaceText)
-    } else if (element.nodeType === Text.TEXT_NODE) {
-        element.textContent = element.textContent.replace(/coronavirus/gi, 'REPLACEMENT')
+        console.log("replaceText function is working")
+
+        const paragraphs = element.getElementsByTagName("p")
+        for (let para of paragraphs) {
+            words = para.innerText
+            words = words.split(wordRegex)
+
+           
+            words = words.map( (word) => {
+                //Randomly highlight any given word
+                let randInt = Math.floor(Math.random() * FREQUENCY) + 1
+                if (randInt == 1) {
+                    // translate the word
+                    return word.toUpperCase()
+                } else {
+                    return word
+                }
+            })
+            console.log(words)
+
+            
+            //console.log(words)
+            words = words.join(" ")
+            para.innerText = words
+            // Rebuilding the sentence as we go
+
+            // Array of words
+            /* for (let sentence of text) {
+                sentence = sentence.split(wordRegex)
+
+                for (let word of sentence) {
+                    word = word.toUpperCase()
+                }
+
+            }*/
+
+            }  
         }
+
+function replaceSentences (element) {
+    const paragraphs = element.getElementsByTagName("p")
+
 }
 
+
 /*
-    Iterate through the elements of the body.
+I need a big ass array of all the words in every doodad
 
-    Do I want words or sentences? Chunks of words, perhaps
+One out of every 10 words is translated
 
-    Need to be able to count words
+I want it to be read through and edited on the spot
 
-    Slicing up the DOM by sentence
+So I have my paragraphs. Within each paragraph, I need to read the sentence and change the text on the other end.
 
-    Let's do it "if the element is of type paragraph"
+For every paragraph, get the whole thing. Get the sentence, figure out the Nth word, send it out to translate, return
+the next completed paragraph, roll on the weekend, sorted.
 */
 
 
-
-/* replaceText(document.body)
-
-function replaceText(element) {
-    if (element.hasChildNodes()) {
-        console.log("Replace text function working")
-    }
-}
- */
-
-/* export const utils = {
-    test() {
-        console.log("Export is working")
-    },
-    print(data) {
-        console.log(data)
-    },
-    findReplace(element) { 
-        if (element.hasChildNodes()) {
-            element.childNodes.forEach(replaceText)
-        } else if (element.nodeType === Text.TEXT_NODE) {
-            // Add the word we want to die and the word we want to add back in
-            // add <mark> tag around the words of interest at first -> proof of concept
-            
-            //element.textContent = element.textContent.replace(/coronavirus/gi, 'REPLACEMENT')
-            console.log(element.textContent)
-        }
-    }
-} */
-
-// CALL WITH findReplace(document.body)
-
-
+// Tutorial find and replace function
+    /* if (element.hasChildNodes()) {
+        element.childNodes.forEach(replaceText)
+    } else if (element.nodeType === Text.TEXT_NODE) {
+        element.textContent = element.textContent.replace(/coronavirus/gi, 'REPLACEMENT')
+        } */

@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "express": "^4.19.2",
     "most-common-words-by-language": "^3.0.13"
   },
   "dependencies": {

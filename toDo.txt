@@ -1,6 +1,5 @@
 Figure out exactly how exports and modules work.
 
-Implement word replace
 
 Create popup interface
     -> design mockup for what it should do
@@ -18,12 +17,17 @@ If those words show up on the english side of the deal, then we know and can qui
 
 We're actually doing that either way aren't we...
 
-
-Current OBJ:
-
-readFileText.js
-    -Format the incoming JSON stuff correctly so we can then:
-        Pass it into google translate without worrying about the readFile fucking up the API calls
-
-
 I don't need to do this cache UP FRONT, but I can implement it as we go forward
+
+Exclusion list for common words
+    -> add highlight and right click to add words to never translate
+Cache for common words
+
+TODO - make translate API work in extension
+    BUNDLING -> Webpack or Browserify
+
+How the fuck would user authentication work if I were to push this out into the wild?
+
+
+Test site:
+https://www.tunera.xyz/fonts/teranoptia/
