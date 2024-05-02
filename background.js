@@ -5,6 +5,7 @@
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
+let onOff = true
 
 console.log("Background working")
 
@@ -25,11 +26,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 })
 
+// THIS IS BROKEN, PLEASE FIX ASSHOLE
 // Handles word frequency getting updated from the UI
 chrome.runtime.onMessage.addListener(
     function(request) {
-        freqCutoff = request.data
+        freqCutoff = request.freqData
+        onOff = request.toggleData
         console.log("Recieved event appropriately")
+        console.log(onOff)
     }
 )
 
