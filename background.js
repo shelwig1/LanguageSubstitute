@@ -10,14 +10,7 @@ let onOff = true
 console.log("Background working")
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    /* if (tab.url?.startsWith("chrome://")) {
-        console.log("Starts with chrome, can't do it")
-        return undefined;
-    } */
-    //console.log("Got past the chrome URL")
-
     if (tab.active && changeInfo.status === 'complete') {
-        //console.log('Tried to run other script')
         chrome.scripting.executeScript({
             target: {tabId : tab.id},
             files: ['content.js']
@@ -26,16 +19,26 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 })
 
-// THIS IS BROKEN, PLEASE FIX ASSHOLE
-// Handles word frequency getting updated from the UI
-chrome.runtime.onMessage.addListener(
-    function(request) {
-        freqCutoff = request.freqData
-        onOff = request.toggleData
-        console.log("Recieved event appropriately")
-        console.log(onOff)
-    }
-)
+// TODO - toggle translations when we hit the toggle
+chrome.storage.onChanged.addListener( async (changes, areaName) => {
+    console.log("Local storage changed")
+
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions)
+    console.log(tab.id)
+    chrome.scripting.executeScript({
+        target: {tabId : tab.id},
+        files: ['content.js']
+    })
+})
+
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+  }
 
 async function fetchData() {
     try{

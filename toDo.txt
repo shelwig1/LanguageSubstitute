@@ -31,3 +31,6 @@ How the fuck would user authentication work if I were to push this out into the 
 
 Test site:
 https://www.tunera.xyz/fonts/teranoptia/
+
+When we change, we run the script again, but we don't restore the page to its original state
+We can do the stupid way and just save the entire page to local storage, but that makes this fucker huge

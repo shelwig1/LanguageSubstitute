@@ -1,43 +1,60 @@
-console.log("Popup script working")
-let freqCutoff;
+let frequency;
+let onOff;
 let toggleValue;
-// What values do I actually need to pass?
-
-// 
+let slider;
+let typer;
+let toggle;
+let form
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Event listener working.")
-    var slider = document.getElementById("rangeSlider")
-    var typer = document.getElementById("rangeTyper")
-    var toggle = document.getElementById("toggle")
-    //toggleValue = toggle.checked
-    freqCutoff = slider.value
+    slider = document.getElementById("rangeSlider")
+    typer = document.getElementById("rangeTyper")
+    toggle = document.getElementById("toggle")
+    form = document.getElementById("optionsForm") 
+
+   chrome.storage.local.get().then(( result) =>{
+        console.log("Storage results: ", result)
+        toggle.checked = result.onOff
+        frequency = result.freqValue
+        slider.value = frequency
+        typer.value = frequency
+   }
+)
+
+// Potential later refactor, in the meantime get it working.
+    /* form.addEventListener("input" ,function (event) {
+        console.log("Form event: ", event.target.id)
+    }) */
 
     slider.addEventListener("input", function(event) {
         typer.value = slider.value
-        freqCutoff = slider.value
-        emitFreqChange()
+        frequency = slider.value
+        chrome.storage.local.set({ freqValue : frequency})
     });
 
     typer.addEventListener("input", function(event) {
         slider.value = typer.value
-        freqCutoff = typer.value
-        emitFreqChange()
+        frequency = typer.value
+        chrome.storage.local.set({ freqValue : frequency})
+
     })
 
     toggle.addEventListener("input", function(event) {
         toggleValue = toggle.checked
-        chrome.runtime.sendMessage({toggleData : toggleValue})
+        chrome.storage.local.set({ onOff : toggle.checked}).then((result) => {
+            console.log("Toggle saved")
+        })
     })
 });
 
 
-function emitFreqChange() {
-    /* const freqChange = new CustomEvent('freqChange', {
-        detail: {freqCutoff : freqCutoff}
-    })
-    window.dispatchEvent(freqChange) */
-    chrome.runtime.sendMessage({data : freqCutoff})
 
-}
+/* window.onload = function () {
+    console.log("Popup loaded")
+    slider = document.getElementById("rangeSlider")
+    typer = document.getElementById("rangeTyper")
+    toggle = document.getElementById("toggle")
+    form = document.getElementById("optionsForm")
 
+} */
