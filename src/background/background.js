@@ -1,6 +1,3 @@
-//import {utils} from "./content.js"
-//import {start} from './content.js'
-
 const server = 'http://localhost:3000/'
 const url = chrome.runtime.getURL('freqList.json')
 let words
@@ -14,10 +11,6 @@ const data = [
     "cat",
     "shoes"
 ]
-//console.log(data)
-//console.log("Stringed up data :", JSON.stringify(data))
-
-
 
 // WE ARE SO IN BABY
 /* fetch('http://localhost:3000/')
@@ -25,7 +18,7 @@ const data = [
   .then(data => console.log(data))
  */
 
-/* chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     console.log("Request received: ", request)
     if (request.word) {
         //console.log("request word :" , request.word)
@@ -40,23 +33,26 @@ const data = [
             })
     }
         console.log("translateCall result: ", translateCall(request.word))
-    }) */
-  
-translateCall("dog")
+    })
+
+translateCall(data)
 
 async function translateCall(data) {
-    const arrayData = [data]
+    //const arrayData = [data]
     const response = await fetch (server, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(arrayData)
+        body: JSON.stringify(data)
     })
     //console.log("Background - recieved response from router: ", response.json)
-        .then(response => {
-            console.log(response)
-        })
+    //console.log("JSON response from server: ",await response.json())
+    const responseData = await response.json()
+    console.log(responseData)
+    for (const item in responseData){
+        console.log(responseData[item])
+    } 
     return response
 }
 
