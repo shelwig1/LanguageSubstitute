@@ -19,8 +19,10 @@ async function translateText(text) {
     // Run request
     const [response] = await translationClient.translateText(request);
 
+
     for (const translation of response.translations) {
         console.log(`Translation: ${translation.translatedText}`);
+        return(translation.translatedText)
     }
 }
 

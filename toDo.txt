@@ -34,3 +34,7 @@ https://www.tunera.xyz/fonts/teranoptia/
 
 When we change, we run the script again, but we don't restore the page to its original state
 We can do the stupid way and just save the entire page to local storage, but that makes this fucker huge
+
+
+User authentication over the API to ensure we have valid requests
+
