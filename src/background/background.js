@@ -16,18 +16,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     /*    if (request.word) {
          translateCall(request.word)
             .then(processedWord => {
-                console.log("Processed word: ",processedWord)
-                //console.log("Background - ready to send the following to content: ", processedWord)
-                //sendResponse({processedWord : processedWord})
                 sendResponse("Testicle test response data SUGMA")
-                //sendResponse(processedWord)
                 console.log("SENT RESPONSE TO CONTENT")
             })
             .catch(error => {
                 sendResponse({error : error.message})
             })
     }
- */        //console.log("translateCall result: ", translateCall(request.word))
+ */        
 
 async function translateCall(data) {
     console.log("Background - translateCall - data received: ", JSON.stringify(data))
