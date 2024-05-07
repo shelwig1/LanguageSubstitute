@@ -6,57 +6,43 @@ let onOff = true
 
 console.log("Background working")
 
-const data = [
-    "dog",
-    "cat",
-    "shoes"
-]
-
-// WE ARE SO IN BABY
-/* fetch('http://localhost:3000/')
-  .then(response => response.json())
-  .then(data => console.log(data))
- */
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log("Request received: ", request)
-    if (request.word) {
-        //console.log("request word :" , request.word)
-        //sendResponse({processedWord : request.word})
-        translateCall(request.word)
+    translateCall(request.word).then(sendResponse)
+    return true
+    
+})
+
+    /*    if (request.word) {
+         translateCall(request.word)
             .then(processedWord => {
-                console.log(processedWord)
-                sendResponse({processedWord : processedWord})
+                console.log("Processed word: ",processedWord)
+                //console.log("Background - ready to send the following to content: ", processedWord)
+                //sendResponse({processedWord : processedWord})
+                sendResponse("Testicle test response data SUGMA")
+                //sendResponse(processedWord)
+                console.log("SENT RESPONSE TO CONTENT")
             })
             .catch(error => {
                 sendResponse({error : error.message})
             })
     }
-        console.log("translateCall result: ", translateCall(request.word))
-    })
-
-translateCall(data)
+ */        //console.log("translateCall result: ", translateCall(request.word))
 
 async function translateCall(data) {
-    //const arrayData = [data]
+    console.log("Background - translateCall - data received: ", JSON.stringify(data))
+    const arrayData = [data]
     const response = await fetch (server, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(arrayData)
     })
-    //console.log("Background - recieved response from router: ", response.json)
-    //console.log("JSON response from server: ",await response.json())
     const responseData = await response.json()
-    console.log(responseData)
-    for (const item in responseData){
-        console.log(responseData[item])
-    } 
-    return response
-}
 
-//serverTest(data)
+    return responseData[0]
+}
 
 async function serverTest(data) {
     const response = await fetch (server, {
