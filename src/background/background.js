@@ -8,8 +8,10 @@ console.log("Background working")
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    translateCall(request.word).then(sendResponse)
-    return true
+    if (request.word) {
+        translateCall(request.word).then(sendResponse)
+        return true
+    }
     
 })
 

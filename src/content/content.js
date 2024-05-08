@@ -47,25 +47,49 @@ async function replaceText (element) {
     for (let para of paragraphs) {
         words = para.innerText
         words = words.split(wordRegex)
-
-        
-        words = words.map( async (word) => {
-            //Randomly highlight any given word
-            let randInt = Math.floor(Math.random() * FREQUENCY) + 1
-            if (randInt == 1) {
-                const newWord = await processWord(word)                
-                return newWord
-                //return word.toUpperCase()
-            } else {
-                return word
-            }
-          })
-        console.log("Processing done, words: ", words)
-        //console.log("Words looks like: ", words)
-        //words = words.join(" ")
-        //para.innerText = words
-        }  
+        words = await Promise.all(words.map(async (word) => {
+          let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
+          if (randInt == 1) {
+              const newWord = await processWord(word);
+              return newWord;
+          } else {
+              return word;
+          }
+      }))
+        console.log("ChatGPT code: ", words)
+        words = words.join(" ")
+        para.innerText = words
+    }}
+    
+ 
+async function wordMap (words) {
+  words = words.map (async (word) => {
+    let randInt = Math.floor(Math.random() * FREQUENCY) + 1
+    if (randInt == 1) {
+        const newWord = await processWord(word)
+        return newWord
+    } else {
+        return word
     }
+  })
+  //console.log("wordMap finished: ", await words)
+
+  return words
+}  
+
+/* 
+return new Promise((resolve, reject) => {
+  chrome.runtime.sendMessage(message, response => {
+    if (chrome.runtime.lastError) {
+      console.log("CHROME MESSAGE ERROR")
+      reject(new Error(chrome.runtime.lastError.message));
+    } else {
+      resolve(response);
+    }
+  });
+});
+}    */
+
 
 function replaceSentences (element) {
     const paragraphs = element.getElementsByTagName("p")

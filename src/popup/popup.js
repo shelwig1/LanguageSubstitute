@@ -12,13 +12,14 @@ document.addEventListener("DOMContentLoaded", function() {
     typer = document.getElementById("rangeTyper")
     toggle = document.getElementById("toggle")
     form = document.getElementById("optionsForm") 
-
+    let mode = document.getElementById("mode")
    chrome.storage.local.get().then(( result) =>{
         console.log("Storage results: ", result)
         toggle.checked = result.onOff
         frequency = result.freqValue
         slider.value = frequency
         typer.value = frequency
+        mode.value = result.mode
    }
 )
 
@@ -26,6 +27,10 @@ document.addEventListener("DOMContentLoaded", function() {
     /* form.addEventListener("input" ,function (event) {
         console.log("Form event: ", event.target.id)
     }) */
+    mode.addEventListener("input", function(event) {
+        console.log("Mode value:", mode.value)
+        chrome.storage.local.set({mode : mode.value})
+    })
 
     slider.addEventListener("input", function(event) {
         typer.value = slider.value
