@@ -2,7 +2,7 @@ var sentenceRegex = /[.!?]+/
 var wordRegex = /\s/
 var FREQUENCY = 10
 var on
-
+var REGEX;
 console.log("Starting content.js")
 
 // MAIN DRIVER
@@ -10,6 +10,11 @@ chrome.storage.local.get().then((result) => {
     on = result.onOff
     console.log(result.onOff)
     if (on) {
+      if (result.mode === "sentence"){
+        REGEX = sentenceRegex
+      } else {
+        REGEX = wordRegex
+      }
         FREQUENCY = 100 / result.freqValue
         console.log("Ran extension")
         replaceText(document.body)
@@ -42,11 +47,10 @@ function sendMessageToBackground(message) {
 
 async function replaceText (element) {
     //console.log("replaceText function is working")
-
     const paragraphs = element.getElementsByTagName("p")
     for (let para of paragraphs) {
         words = para.innerText
-        words = words.split(wordRegex)
+        words = words.split(REGEX)
         words = await Promise.all(words.map(async (word) => {
           let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
           if (randInt == 1) {
@@ -56,42 +60,10 @@ async function replaceText (element) {
               return word;
           }
       }))
-        console.log("ChatGPT code: ", words)
+        //console.log("ChatGPT code: ", words)
         words = words.join(" ")
         para.innerText = words
     }}
     
- 
-async function wordMap (words) {
-  words = words.map (async (word) => {
-    let randInt = Math.floor(Math.random() * FREQUENCY) + 1
-    if (randInt == 1) {
-        const newWord = await processWord(word)
-        return newWord
-    } else {
-        return word
-    }
-  })
-  //console.log("wordMap finished: ", await words)
-
-  return words
-}  
-
-/* 
-return new Promise((resolve, reject) => {
-  chrome.runtime.sendMessage(message, response => {
-    if (chrome.runtime.lastError) {
-      console.log("CHROME MESSAGE ERROR")
-      reject(new Error(chrome.runtime.lastError.message));
-    } else {
-      resolve(response);
-    }
-  });
-});
-}    */
 
 
-function replaceSentences (element) {
-    const paragraphs = element.getElementsByTagName("p")
-
-}

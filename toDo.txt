@@ -38,3 +38,14 @@ We can do the stupid way and just save the entire page to local storage, but tha
 
 User authentication over the API to ensure we have valid requests
 
+//////
+
+Handling multiple arabic words translated in a row (reverse em)
+Or, just skip it and do the sentence implementation
+Language selector
+Dynamically turn it on and off
+    -> backups of the page that we flip in between
+
+Translate blacklist -> that, the, he, she, we, etc
+
+Context menu implementation to add words to a block list

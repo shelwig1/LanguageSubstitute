@@ -2,3 +2,7 @@
     display:block
 }
 /* The switch - the box around the slider */
+body {
+    background-color: black;
+    color: white;
+}
