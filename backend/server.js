@@ -9,7 +9,7 @@ const router = require('./router')
 
 app.use('/', router)
 
-app.post('/', (req, res) => {
+app.get('/', (req, res) => {
     console.log(req.body)
     res.body = "Hello!"
 })
