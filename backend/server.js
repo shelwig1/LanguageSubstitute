@@ -7,14 +7,17 @@ app.use(bodyParser.json())
 
 const router = require('./router')
 
+// IMPORTANT LINE TO UNDO LATER
 app.use('/', router)
 
-app.get('/', (req, res) => {
+
+/* 
+app.get('/hello', (req, res) => {
     console.log(req.body)
     res.body = "Hello!"
-})
+}) */
 
-//app.listen(3000, () => console.log('Server has started'))
+app.listen(3000, () => console.log('Server has started'))
 
 module.exports = app
 
