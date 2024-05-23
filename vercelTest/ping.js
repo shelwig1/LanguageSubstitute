@@ -24,9 +24,10 @@ const req = http.request(options, (res) => {
     
     req.end(); */
 
-/* const axios = require('axios');
+ const axios = require('axios');
 
 // Replace 'example.vercel.app' with your actual Vercel deployment URL
+const url = 'https://language-substitute.vercel.app/';
 
 axios.get(url)
   .then(response => {
@@ -36,10 +37,8 @@ axios.get(url)
     console.error(`Error: ${error.message}`);
   });
 
-  f
- */
-  const url = 'https://language-substitute.vercel.app/';
-
+  
+/* 
   fetch(url)
   .then(response => {
     if (!response.ok) {
@@ -53,3 +52,4 @@ axios.get(url)
   .catch(error => {
     console.error('Error fetching data:', error);
   });
+ */
