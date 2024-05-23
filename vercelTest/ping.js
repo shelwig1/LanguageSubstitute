@@ -24,16 +24,32 @@ const req = http.request(options, (res) => {
     
     req.end(); */
 
-const axios = require('axios');
+/* const axios = require('axios');
 
 // Replace 'example.vercel.app' with your actual Vercel deployment URL
-const url = 'https://language-substitute.vercel.app/';
 
 axios.get(url)
   .then(response => {
-    console.log(response.data);
+    console.log(response.json);
   })
   .catch(error => {
     console.error(`Error: ${error.message}`);
   });
 
+  f
+ */
+  const url = 'https://language-substitute.vercel.app/';
+
+  fetch(url)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Data received:', data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
