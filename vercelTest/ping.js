@@ -27,7 +27,7 @@ const req = http.request(options, (res) => {
 const axios = require('axios');
 
 // Replace 'example.vercel.app' with your actual Vercel deployment URL
-const url = 'https://language-substitute.vercel.app/hello';
+const url = 'https://language-substitute.vercel.app/';
 
 axios.get(url)
   .then(response => {
