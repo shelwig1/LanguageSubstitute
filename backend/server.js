@@ -11,11 +11,10 @@ const router = require('./router')
 app.use('/', router)
 
 
-/* 
 app.get('/hello', (req, res) => {
     console.log(req.body)
     res.body = "Hello!"
-}) */
+}) 
 
 app.listen(3000, () => console.log('Server has started'))
 
