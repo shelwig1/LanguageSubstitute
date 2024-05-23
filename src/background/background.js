@@ -1,4 +1,5 @@
 const SERVER = 'http://localhost:3000/'
+//const SERVER = 'language-substitute.vercel.app'
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
