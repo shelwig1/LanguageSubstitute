@@ -1,7 +1,7 @@
-const http = require('http')
+/* const http = require('http')
 
 const options = {
-    hostname: 'language-substitute-rfkgoh66u-seans-projects-e8bfcdac.vercel.app',
+    hostname: 'language-substitute.vercel.app',
     path: '/',
     method: 'GET'
 }
@@ -22,4 +22,18 @@ const req = http.request(options, (res) => {
       console.error(`Problem with request: ${e.message}`);
     });
     
-    req.end();
+    req.end(); */
+
+const axios = require('axios');
+
+// Replace 'example.vercel.app' with your actual Vercel deployment URL
+const url = 'https://language-substitute.vercel.app/hello';
+
+axios.get(url)
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(`Error: ${error.message}`);
+  });
+
