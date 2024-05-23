@@ -49,3 +49,17 @@ Dynamically turn it on and off
 Translate blacklist -> that, the, he, she, we, etc
 
 Context menu implementation to add words to a block list
+
+________
+
+Can I make transalte API translate brand names?
+Context menu -> untranslate this sentence
+
+
+/// How to implement multiple languages?
+    -> French, Russian
+
+/// Context menu stuff -> save sentence, etc
+
+Translating brand names -> seems to work when we add "" around the word -> may take a given sentence and go work by word, instead of using the sentence regex.
+Word by word, add quotes, take it back, strip the quotes, use it to build the sentence anew.

@@ -1,8 +1,11 @@
 var sentenceRegex = /[.!?]+/
 var wordRegex = /\s/
+var sentenceJoin = ". "
+var wordJoin = " "
 var FREQUENCY = 10
 var on
 var REGEX;
+var JOIN;
 console.log("Starting content.js")
 
 // MAIN DRIVER
@@ -12,8 +15,10 @@ chrome.storage.local.get().then((result) => {
     if (on) {
       if (result.mode === "sentence"){
         REGEX = sentenceRegex
+        JOIN = sentenceJoin
       } else {
         REGEX = wordRegex
+        JOIN = wordJoin
       }
         FREQUENCY = 100 / result.freqValue
         console.log("Ran extension")
@@ -46,6 +51,13 @@ function sendMessageToBackground(message) {
   }   
 
 async function replaceText (element) {
+    // Iterating through every HTML element, rather than just the paragraphs
+    /* if (element.hasChildNodes() {
+      element.childNodes.forEach(replaceText)
+    } else if (element.nodeType === Text.TEXT_NODE) {
+      element.textContent = element.textContent.replace(textToReplace)
+    } */
+
     //console.log("replaceText function is working")
     const paragraphs = element.getElementsByTagName("p")
     for (let para of paragraphs) {
@@ -61,7 +73,7 @@ async function replaceText (element) {
           }
       }))
         //console.log("ChatGPT code: ", words)
-        words = words.join(" ")
+        words = words.join(JOIN)
         para.innerText = words
     }}
     

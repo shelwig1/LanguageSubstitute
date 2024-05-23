@@ -1,4 +1,4 @@
-const server = 'http://localhost:3000/'
+const SERVER = 'http://localhost:3000/'
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 async function translateCall(data) {
     console.log("Background - translateCall - data received: ", JSON.stringify(data))
     const arrayData = [data]
-    const response = await fetch (server, {
+    const response = await fetch (SERVER, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
