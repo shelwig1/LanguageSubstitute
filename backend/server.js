@@ -14,5 +14,7 @@ app.use('/', router)
     res.body = 
 }) */
 
-app.listen(3000, () => console.log('Server has started'))
+//app.listen(3000, () => console.log('Server has started'))
+
+module.exports = app
 
