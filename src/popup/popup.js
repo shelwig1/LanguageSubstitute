@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     toggle = document.getElementById("toggle")
     form = document.getElementById("optionsForm") 
     let mode = document.getElementById("mode")
+    let targetLanguage = document.getElementById("language")
    chrome.storage.local.get().then(( result) =>{
         console.log("Storage results: ", result)
         toggle.checked = result.onOff
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
         slider.value = frequency
         typer.value = frequency
         mode.value = result.mode
+        targetLanguage.value = result.targetLanguage
    }
 )
 
@@ -30,6 +32,12 @@ document.addEventListener("DOMContentLoaded", function() {
     mode.addEventListener("input", function(event) {
         console.log("Mode value:", mode.value)
         chrome.storage.local.set({mode : mode.value})
+    })
+
+    targetLanguage.addEventListener("input", function(event) {
+        console.log("Targetlang value: ", targetLanguage.value)
+        chrome.storage.local.set({targetLanguage : targetLanguage.value})
+
     })
 
     slider.addEventListener("input", function(event) {

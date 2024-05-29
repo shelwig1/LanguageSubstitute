@@ -1,3 +1,6 @@
+require('dotenv').config();
+const { GoogleAuth } = require('google-auth-library');
+
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser');
@@ -17,6 +20,7 @@ app.get('/hello', (req, res) => {
 }) 
 
 app.listen(3000, () => console.log('Server has started'))
+
 
 module.exports = app
 

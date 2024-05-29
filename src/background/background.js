@@ -1,10 +1,12 @@
-const SERVER = 'http://localhost:3000/'
+//const SERVER = 'http://localhost:3000/'
+const SERVER = 'https://vercel-server-test-opal.vercel.app/'
+//const SERVER = 'https://vercel-server-test-opal.vercel.app/'
 //const SERVER = 'language-substitute.vercel.app'
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
 let onOff = true
-
+let targetLanguage
 console.log("Background working")
 
 
@@ -27,9 +29,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             })
     }
  */        
-
+// Add in the target language we want -> should be able to pull it from the storage we're using
 async function translateCall(data) {
-    console.log("Background - translateCall - data received: ", JSON.stringify(data))
+    //console.log("Background - translateCall - data received: ", JSON.stringify(data))
+
+    // Right way to access the target language but not the right way to poll it - have it poll every time it changes
+    chrome.storage.local.get(["targetLanguage"]).then((result) => {
+        targetLanguage = result.targetLanguage;
+      });
+
+    //console.log(targetLanguage)
+    //console.log("Target language: ", targetLanguage)
+
+    // TEST CODE, can die if needed
+    const testData = [data, targetLanguage]
+    console.log("TEST DATA: ", testData)
+    // END TEST CODE
+
+
     const arrayData = [data]
     const response = await fetch (SERVER, {
         method: "POST",
