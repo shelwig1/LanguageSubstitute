@@ -1,4 +1,5 @@
 var sentenceRegex = /[.!?]+/
+var sentenceRegexFIXED = /(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!|;)\s/
 var wordRegex = /\s/
 var sentenceJoin = ". "
 var wordJoin = " "
@@ -14,7 +15,7 @@ chrome.storage.local.get().then((result) => {
     console.log(result.onOff)
     if (on) {
       if (result.mode === "sentence"){
-        REGEX = sentenceRegex
+        REGEX = sentenceRegexFIXED
         JOIN = sentenceJoin
       } else {
         REGEX = wordRegex
@@ -52,37 +53,12 @@ function sendMessageToBackground(message) {
   }   
 
 async function replaceText (element) {
-
-      /*
-          let span = document.createElement('span')
-              span.className = 'translation'
-              span.textContent = newWord
-
-    */
-
-    // We can add newlines if we're doing sentences around em for Arabic
-
-    // Hover on an individual
-
-    // Iterating through every HTML element, rather than just the paragraphs
-    /* if (element.hasChildNodes() {
-      element.childNodes.forEach(replaceText)
-    } else if (element.nodeType === Text.TEXT_NODE) {
-      element.textContent = element.textContent.replace(textToReplace)
-    } */
-
-    //console.log("replaceText function is working")
-
-    /* We have fuck ups with:
-      -replacing ? ! . when we rebuild everything
-      -current implementation kills all cool little things like hyperlinks and shit
-
-    */
-     const paragraphs = element.getElementsByTagName("p")
+    const paragraphs = element.getElementsByTagName("p")
    
     for (let para of paragraphs) {
       words = para.innerText
       words = words.split(REGEX)
+      console.log("Split up paragraph looks like: ", words)
       para.innerText = ''
 
       words.forEach(chunk => {
@@ -93,7 +69,7 @@ async function replaceText (element) {
       })
 
     }
-
+ 
     const chunks = document.querySelectorAll('.chunk')
     chunks.forEach(async chunk => {
       let random = Math.floor(Math.random() * 101)
@@ -117,43 +93,18 @@ async function replaceText (element) {
           }
         })
       }
-    })
+    }) 
   }
 
- 
-  /*     let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
-      if (randInt == 1) {
-        console.log("Hit the jackpot baby")
-        //chunk.textContent = await processWord(chunk.textContent)
-      } */
+/*
+We broke word mode.
 
- /* 
-    for (let para of paragraphs) {
-        words = para.innerText
-        words = words.split(REGEX)
-        words = await Promise.all(words.map(async (word) => {
 
-          // All of them need to be wrapped into a span
+May benefit from creating two different functions, one for word and one for sentence
+  -> I have a feeling the structure of the two need to be fundamentally different.
 
-          // Create the span, wrap the sentence with it.
 
-          // If it gets translated, add the class to it to make it a translation
+NLP can be used to make this work better, potentially - worth looking in to
 
-          /* let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
-          if (randInt == 1) {
- 
-          let random = Math.floor(Math.random() * 101)
-          if (random < FREQUENCY) {
-              console.log("HIT")
-              const newWord = await processWord(word);
-              return newWord;
-          } else {
-              return word;
-          }
-      }))
-        words = words.join(JOIN)
-        para.innerText = words
-    }}
-   
- */
-
+Right now we eat hyperlinks - let's try to fix that
+*/
