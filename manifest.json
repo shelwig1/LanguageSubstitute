@@ -20,6 +20,7 @@
         {
             "matches": ["<all_urls>"],
             "js": ["./src/content/content.js"],
+            "css": ["./src/content/content.css"],
             "type":"module"
         }
     ],

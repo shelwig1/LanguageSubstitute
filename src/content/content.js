@@ -20,7 +20,8 @@ chrome.storage.local.get().then((result) => {
         REGEX = wordRegex
         JOIN = wordJoin
       }
-        FREQUENCY = 100 / result.freqValue
+        //FREQUENCY = 100 / result.freqValue
+        FREQUENCY = result.freqValue
         console.log("Ran extension")
         replaceText(document.body)
     } else {
@@ -51,6 +52,18 @@ function sendMessageToBackground(message) {
   }   
 
 async function replaceText (element) {
+
+      /*
+          let span = document.createElement('span')
+              span.className = 'translation'
+              span.textContent = newWord
+
+    */
+
+    // We can add newlines if we're doing sentences around em for Arabic
+
+    // Hover on an individual
+
     // Iterating through every HTML element, rather than just the paragraphs
     /* if (element.hasChildNodes() {
       element.childNodes.forEach(replaceText)
@@ -59,23 +72,88 @@ async function replaceText (element) {
     } */
 
     //console.log("replaceText function is working")
-    const paragraphs = element.getElementsByTagName("p")
+
+    /* We have fuck ups with:
+      -replacing ? ! . when we rebuild everything
+      -current implementation kills all cool little things like hyperlinks and shit
+
+    */
+     const paragraphs = element.getElementsByTagName("p")
+   
+    for (let para of paragraphs) {
+      words = para.innerText
+      words = words.split(REGEX)
+      para.innerText = ''
+
+      words.forEach(chunk => {
+        let span = document.createElement('span')
+        span.textContent = chunk
+        span.classList.add('chunk')
+        para.appendChild(span)
+      })
+
+    }
+
+    const chunks = document.querySelectorAll('.chunk')
+    chunks.forEach(async chunk => {
+      let random = Math.floor(Math.random() * 101)
+      if (random < FREQUENCY) {
+        console.log(random, " was less than ", FREQUENCY, " so this was a hit")
+        const beforeText = chunk.textContent
+        chunk.textContent = await processWord(chunk.textContent)
+
+        chunk.addEventListener('mouseover', function(event) {
+          let hoverPopup = document.createElement("div")
+          hoverPopup.innerText = beforeText
+          hoverPopup.classList.add('hoverPopup')
+          chunk.appendChild(hoverPopup)          
+        })
+
+        chunk.addEventListener("mouseout", function(event) {
+          console.log("Moused off, baby")
+          let existingPopup = chunk.querySelector('.hoverPopup')
+          if (existingPopup) {
+            existingPopup.remove()
+          }
+        })
+      }
+    })
+  }
+
+ 
+  /*     let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
+      if (randInt == 1) {
+        console.log("Hit the jackpot baby")
+        //chunk.textContent = await processWord(chunk.textContent)
+      } */
+
+ /* 
     for (let para of paragraphs) {
         words = para.innerText
         words = words.split(REGEX)
         words = await Promise.all(words.map(async (word) => {
-          let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
+
+          // All of them need to be wrapped into a span
+
+          // Create the span, wrap the sentence with it.
+
+          // If it gets translated, add the class to it to make it a translation
+
+          /* let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
           if (randInt == 1) {
+ 
+          let random = Math.floor(Math.random() * 101)
+          if (random < FREQUENCY) {
+              console.log("HIT")
               const newWord = await processWord(word);
               return newWord;
           } else {
               return word;
           }
       }))
-        //console.log("ChatGPT code: ", words)
         words = words.join(JOIN)
         para.innerText = words
     }}
-    
-
+   
+ */
 
