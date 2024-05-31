@@ -89,46 +89,38 @@ async function replaceSentence (element) {
           let hoverPopup = document.createElement("div")
           hoverPopup.innerText = beforeText
           hoverPopup.classList.add('hoverPopup')
-          /* 
-          Makes the translation sit underneath the sentence or word
-          const rect = event.target.getBoundingClientRect()
+
+          // This works by itself but if we try to make it move on with the mouse we get fucked
+  /*         const rect = event.target.getBoundingClientRect()
           hoverPopup.style.top = rect.bottom + window.scrollY + 'px'
-          hoverPopup.style.left = rect.left + window.scrollX + 'px'
- */
-          chunk.appendChild(hoverPopup)          
-   
+          hoverPopup.style.left = rect.left + 'px' */
+
+
+          //Makes the translation sit underneath the sentence or word
+         
+         
+          
+          //chunk.appendChild(hoverPopup)          
+          document.body.appendChild(hoverPopup)
+ 
           // Follows the cursor around but get's buggy when it nearly hits the wall
-          chunk.addEventListener('mousemove', function(event) {
-            const x = event.clientX + window.scrollX
+           chunk.addEventListener('mousemove', function(event) {
+            const x = event.clientX
             const y = event.clientY + window.scrollY
 
-            hoverPopup.style.left = (x + 10) + 'px'
-            hoverPopup.style.top = (y + 10) + 'px'
-            const hoverPopupWidth= popup.offsetWidth;
-            const hoverPopupHeight = popup.offsetHeight;
-            const maxX = window.innerWidth - hoverPopupWidth
-            const maxY = window.innerHeight - hoverPopupHeight;
-
-            if (x > maxX) {
-                hoverPopup.style.left = maxX + 'px';
-            }
-
-            if (y > maxY) {
-                hoverPopup.style.top = maxY + 'px';
-            }
-          })
-          
+            hoverPopup.style.left = (event.clientX + 10) + 'px'
+            hoverPopup.style.top = (event.clientY + window.scrollY + 10) + 'px'
         })
 
         chunk.addEventListener("mouseout", function(event) {
           console.log("Moused off, baby")
-          let existingPopup = chunk.querySelector('.hoverPopup')
+          let existingPopup = document.body.querySelector('.hoverPopup')
           if (existingPopup) {
             existingPopup.remove()
           }
         })
-      }
-    }) 
+      })
+}}) 
   }
 
 // We can refactor this - replace functions just mark necessary elements as what we want, and the 
@@ -163,29 +155,33 @@ async function replaceWord(element){
     element.addEventListener('mouseover', function(event) {
       console.log("Moused over translated word")
       let hoverPopup = document.createElement("div")
+
+      // Restore this guy
       hoverPopup.innerText = element.getAttribute('before')
       hoverPopup.classList.add('hoverPopup')
       element.appendChild(hoverPopup)          
 
-      element.addEventListener('mousemove', function(event) {
+ /*      element.addEventListener('mousemove', function(event) {
         const x = event.clientX + window.scrollX
         const y = event.clientY + window.scrollY
 
         hoverPopup.style.left = (x + 10) + 'px'
         hoverPopup.style.top = (y + 10) + 'px'
-        const hoverPopupWidth= popup.offsetWidth;
+
+
+       /*  const hoverPopupWidth= popup.offsetWidth;
         const hoverPopupHeight = popup.offsetHeight;
         const maxX = window.innerWidth - hoverPopupWidth
-        const maxY = window.innerHeight - hoverPopupHeight;
-
+        const maxY = window.innerHeight - hoverPopupHeight; */
+/* 
         if (x > maxX) {
             hoverPopup.style.left = maxX + 'px';
         }
 
         if (y > maxY) {
             hoverPopup.style.top = maxY + 'px';
-        }
-      })
+        } 
+      }) */
     })
   
     element.addEventListener("mouseout", function(event) {
