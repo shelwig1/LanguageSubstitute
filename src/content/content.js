@@ -78,49 +78,34 @@ async function replaceSentence (element) {
     }
  
     const chunks = document.querySelectorAll('.chunk')
-    chunks.forEach(async chunk => {
+     /* chunks.forEach(async chunk => {
       let random = Math.floor(Math.random() * 101)
       if (random < FREQUENCY) {
         console.log(random, " was less than ", FREQUENCY, " so this was a hit")
         const beforeText = chunk.textContent
         chunk.textContent = await processWord(chunk.textContent)
-
-        chunk.addEventListener('mouseover', function(event) {
-          let hoverPopup = document.createElement("div")
-          hoverPopup.innerText = beforeText
-          hoverPopup.classList.add('hoverPopup')
-
-          // This works by itself but if we try to make it move on with the mouse we get fucked
-  /*         const rect = event.target.getBoundingClientRect()
-          hoverPopup.style.top = rect.bottom + window.scrollY + 'px'
-          hoverPopup.style.left = rect.left + 'px' */
+        chunk.classList.add('translation')
+      }
+    }) 
 
 
-          //Makes the translation sit underneath the sentence or word
-         
-         
-          
-          //chunk.appendChild(hoverPopup)          
-          document.body.appendChild(hoverPopup)
- 
-          // Follows the cursor around but get's buggy when it nearly hits the wall
-           chunk.addEventListener('mousemove', function(event) {
-            const x = event.clientX
-            const y = event.clientY + window.scrollY
-
-            hoverPopup.style.left = (event.clientX + 10) + 'px'
-            hoverPopup.style.top = (event.clientY + window.scrollY + 10) + 'px'
-        })
-
-        chunk.addEventListener("mouseout", function(event) {
-          console.log("Moused off, baby")
-          let existingPopup = document.body.querySelector('.hoverPopup')
-          if (existingPopup) {
-            existingPopup.remove()
-          }
-        })
-      })
-}}) 
+    addHighlightsAndPopup() */
+    const processChunks = async () => {
+      const promises = Array.from(chunks).map(async (chunk) => {
+        let random = Math.floor(Math.random() * 101);
+        if (random < FREQUENCY) {
+          console.log(random, " was less than ", FREQUENCY, " so this was a hit");
+          const beforeText = chunk.textContent;
+          chunk.setAttribute('before', beforeText)
+          chunk.textContent = await processWord(chunk.textContent);
+          chunk.classList.add('translation');
+        }
+      });
+    
+      await Promise.all(promises);
+      addHighlightsAndPopup();
+    }
+    processChunks()
   }
 
 // We can refactor this - replace functions just mark necessary elements as what we want, and the 
@@ -148,50 +133,9 @@ async function replaceWord(element){
     words = words.join(' ')
     para.innerHTML = words
 
+    addHighlightsAndPopup()
+
   }
-
-  const elements = document.querySelectorAll('.translation')
-  elements.forEach(element => {
-    element.addEventListener('mouseover', function(event) {
-      console.log("Moused over translated word")
-      let hoverPopup = document.createElement("div")
-
-      // Restore this guy
-      hoverPopup.innerText = element.getAttribute('before')
-      hoverPopup.classList.add('hoverPopup')
-      element.appendChild(hoverPopup)          
-
- /*      element.addEventListener('mousemove', function(event) {
-        const x = event.clientX + window.scrollX
-        const y = event.clientY + window.scrollY
-
-        hoverPopup.style.left = (x + 10) + 'px'
-        hoverPopup.style.top = (y + 10) + 'px'
-
-
-       /*  const hoverPopupWidth= popup.offsetWidth;
-        const hoverPopupHeight = popup.offsetHeight;
-        const maxX = window.innerWidth - hoverPopupWidth
-        const maxY = window.innerHeight - hoverPopupHeight; */
-/* 
-        if (x > maxX) {
-            hoverPopup.style.left = maxX + 'px';
-        }
-
-        if (y > maxY) {
-            hoverPopup.style.top = maxY + 'px';
-        } 
-      }) */
-    })
-  
-    element.addEventListener("mouseout", function(event) {
-      console.log("Moused off, baby")
-      let existingPopup = element.querySelector('.hoverPopup')
-      if (existingPopup) {
-        existingPopup.remove()
-      }
-    })
-  })    
 }
 
 /*
@@ -239,3 +183,38 @@ document.addEventListener("DOMContentLoaded", function() {
     paragraph.appendChild(afterTextNode);
 });
 */
+
+function addHighlightsAndPopup() {
+  const translations = document.querySelectorAll('.translation')
+  console.log(translations)
+  console.log("Triggered highlights and popup")
+
+  translations.forEach( element => {
+    element.addEventListener('mouseover', function(event) {
+      console.log("Triggered mouseover")
+      let hoverPopup = document.createElement("div")
+      hoverPopup.innerText = element.getAttribute("before")
+      hoverPopup.classList.add('hoverPopup')
+
+      document.body.appendChild(hoverPopup)
+
+      // Follows the cursor around but get's buggy when it nearly hits the wall
+       element.addEventListener('mousemove', function(event) {
+        const x = event.clientX
+        const y = event.clientY + window.scrollY
+
+        hoverPopup.style.left = (event.clientX + 10) + 'px'
+        hoverPopup.style.top = (event.clientY + window.scrollY + 10) + 'px'
+    })
+
+    element.addEventListener("mouseout", function(event) {
+      console.log("Moused off, baby")
+      let existingPopup = document.body.querySelector('.hoverPopup')
+      if (existingPopup) {
+        existingPopup.remove()
+      }
+    })
+  })
+
+  })
+}
