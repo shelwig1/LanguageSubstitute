@@ -8,7 +8,12 @@
     z-index: 1000;
 }
 
+/* .translation {
+    text-decoration: underline;
+} */
+
 .translation:hover {
-    background-color: yellow;
+    background-color: rgb(0, 204, 255);
     cursor:default;
+    text-decoration: none;
 }

@@ -7,31 +7,36 @@ var FREQUENCY = 10
 var on
 var REGEX;
 var JOIN;
+var language;
+
+const SHORT_LENGTH = 10
+
 console.log("Starting content.js")
+
+// TODO word save option on clicking our special friends
+
+// TODO Translate all SHORT sentences and some words within a larger sentence - > make it so no two words in sequence get diddled
 
 // MAIN DRIVER
 chrome.storage.local.get().then((result) => {
     on = result.onOff
     console.log(result.onOff)
     if (on) {
+      language = result.targetLanguage
       FREQUENCY = result.freqValue
-      /* if (result.mode === "sentence"){
-        REGEX = sentenceRegexFIXED
-        JOIN = sentenceJoin
-      }
-       else {
-        REGEX = wordRegex
-        JOIN = wordJoin
-      }
-        //FREQUENCY = 100 / result.freqValue
-        FREQUENCY = result.freqValue
-        console.log("Ran extension")
-        replaceText(document.body) */
+
+      console.log("Target language on load is: ", language)
+      console.log("Current mode is: " , result.mode)
+
         if (result.mode === "sentence") {
           replaceSentence(document.body)
+        } else if (result.mode === "hybrid"){
+          replaceHybrid(document.body)
         } else {
           replaceWord(document.body)
         }
+
+
     } else {
         console.log("Extension is off")
     }
@@ -39,7 +44,7 @@ chrome.storage.local.get().then((result) => {
  
 async function processWord(word2) {
     try {
-      const response = await sendMessageToBackground({ word: word2 });
+      const response = await sendMessageToBackground({ word: word2, targetLanguage : language });
       return response
     } catch (error) {
       console.error("Error:", error);
@@ -59,6 +64,88 @@ function sendMessageToBackground(message) {
     });
   }   
 
+async function replaceHybrid (element) {
+  /*
+  Translate all short sentences and some words within larger sentences
+    -> What is a short sentence?
+      -> Start with anything shorter than 10 and scale it up.
+
+  No two words directly following one another in the "large" sentences
+  */
+
+  // Chunk the document body into paragraphs.
+
+  // Go through each sentence and determine if it's long or short
+  // If short: translate and replace.
+  // else: go word for word and use the hybrid freq, but skip the next word if we need to 
+
+  // I think the skeleton for this is replaceSentence and modify as needed
+  const paragraphs = element.getElementsByTagName("p")
+
+  for (let para of paragraphs) {
+    rawSentences = para.innerText.split(sentenceRegexFIXED)
+    para.innerText = ''
+
+    rawSentences.forEach(chunk => {
+      let span = document.createElement('span')
+      span.textContent = chunk + " "
+      span.classList.add('chunk')
+      para.appendChild(span)
+    })
+  }
+
+    const chunks = document.querySelectorAll('.chunk')
+
+    const processChunks = async () => {
+      const promises = Array.from(chunks).map(async (chunk) => {
+        chunkWordCount = chunk.innerText.split(" ").length
+
+        if (chunkWordCount <= SHORT_LENGTH) {
+            console.log("SHORT SENTENCE FOUND")
+            const beforeText = chunk.textContent
+            chunk.setAttribute('before', beforeText)
+            chunk.textContent = await processWord(chunk.textContent)
+            chunk.classList.add("translation")
+        } else {
+
+            // TODO - NO TWO CONSECUTIVE WORDS
+
+            // Go through the chunk inner text and check each word individually. Use the trad for loop with the promise que
+            let words = chunk.innerText.split(wordRegex)
+            words = await Promise.all(words.map(async (word) => {
+                let random = Math.floor(Math.random() * 101)
+                if (random < FREQUENCY) {
+                    const newWord = await processWord(word)
+                    return ('<span class="translation" before=' + word + '>' + newWord + "</span>")
+                } else {
+                    return word
+                }
+            }))
+
+            words = words.join(' ')
+            chunk.innerText = ''
+            chunk.innerHTML = words
+        }
+      })
+        await Promise.all(promises);
+        addHighlightsAndPopup();
+    }
+    processChunks()
+  }
+
+
+
+            
+      
+    
+  
+    //const promises = []
+    // promises.push(aysncFunction(item))
+    //await Promise.all(promises)
+
+    // We can read it left to right and replace whenever we fulfill the next promise. This would streamline everything...
+  
+
 async function replaceSentence (element) {
     const paragraphs = element.getElementsByTagName("p")
    
@@ -70,7 +157,7 @@ async function replaceSentence (element) {
 
       words.forEach(chunk => {
         let span = document.createElement('span')
-        span.textContent = chunk
+        span.textContent = chunk + " "
         span.classList.add('chunk')
         para.appendChild(span)
       })
@@ -117,12 +204,12 @@ async function replaceWord(element){
   const paragraphs = element.getElementsByTagName("p")
 
   for (let para of paragraphs) { 
-    const originalWords = para.innerText
+    //const originalWords = para.innerText
     words = para.innerText.split(wordRegex)
     words = await Promise.all(words.map(async (word) => {
       let random = Math.floor(Math.random() * 101)
       if (random < FREQUENCY) {
-        const beforeText = word
+        //const beforeText = word
         const newWord = await processWord(word);
         return ('<span class="translation" before=' +  word +  '>' +  newWord +  "</span>");
       } else {

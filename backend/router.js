@@ -19,15 +19,17 @@ router.get('/', (req, res) => {
 
 router.post('/', async (req, res) => {
     const data = req.body
-    console.log("Server - data received:", data)
+    const languageCode = req.body[1]
+    console.log("Language code received: " , req.body[1])
+    //console.log("Server - data received:", data)
     const responseData = []
-    console.log("Recieved a post request ", data)
-    console.log(data.length)
+    //console.log("Recieved a post request ", data)
+    //console.log(data.length)
     for (const word in data) {
         //console.log("Word: ", data[word])
         //const processedWord = data[word]
         // Uncomment this and everything should work correctly
-        const processedWord = await translate.translateText(data[word])
+        const processedWord = await translate.translateText(data[word], languageCode)
         responseData.push(processedWord)
     }
     //res.body = JSON.stringify(responseData)
