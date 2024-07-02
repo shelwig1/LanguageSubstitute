@@ -13,7 +13,8 @@ const projectId = 'virtual-cubist-399422';
 const location = 'global';
 /* const text = 'Hello, world!'; */
 
-async function translateText(text) {
+// Make it take a language request as well - first, are we sending the language to the server?
+async function translateText(text, targetLanguage) {
     
     // Construct request
     const request = {
@@ -21,7 +22,7 @@ async function translateText(text) {
         contents: [text],
         mimeType: 'text/plain', // mime types: text/plain, text/html
         sourceLanguageCode: 'en',
-        targetLanguageCode: 'ar',
+        targetLanguageCode: targetLanguage,
     };
 
     // Run request

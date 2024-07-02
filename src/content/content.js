@@ -1,4 +1,5 @@
 var sentenceRegex = /[.!?]+/
+var sentenceRegexFIXED = /(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!|;)\s/
 var wordRegex = /\s/
 var sentenceJoin = ". "
 var wordJoin = " "
@@ -6,23 +7,36 @@ var FREQUENCY = 10
 var on
 var REGEX;
 var JOIN;
+var language;
+
+const SHORT_LENGTH = 10
+
 console.log("Starting content.js")
+
+// TODO word save option on clicking our special friends
+
+// TODO Translate all SHORT sentences and some words within a larger sentence - > make it so no two words in sequence get diddled
 
 // MAIN DRIVER
 chrome.storage.local.get().then((result) => {
     on = result.onOff
     console.log(result.onOff)
     if (on) {
-      if (result.mode === "sentence"){
-        REGEX = sentenceRegex
-        JOIN = sentenceJoin
-      } else {
-        REGEX = wordRegex
-        JOIN = wordJoin
-      }
-        FREQUENCY = 100 / result.freqValue
-        console.log("Ran extension")
-        replaceText(document.body)
+      language = result.targetLanguage
+      FREQUENCY = result.freqValue
+
+      console.log("Target language on load is: ", language)
+      console.log("Current mode is: " , result.mode)
+
+        if (result.mode === "sentence") {
+          replaceSentence(document.body)
+        } else if (result.mode === "hybrid"){
+          replaceHybrid(document.body)
+        } else {
+          replaceWord(document.body)
+        }
+
+
     } else {
         console.log("Extension is off")
     }
@@ -30,7 +44,7 @@ chrome.storage.local.get().then((result) => {
  
 async function processWord(word2) {
     try {
-      const response = await sendMessageToBackground({ word: word2 });
+      const response = await sendMessageToBackground({ word: word2, targetLanguage : language });
       return response
     } catch (error) {
       console.error("Error:", error);
@@ -50,32 +64,244 @@ function sendMessageToBackground(message) {
     });
   }   
 
-async function replaceText (element) {
-    // Iterating through every HTML element, rather than just the paragraphs
-    /* if (element.hasChildNodes() {
-      element.childNodes.forEach(replaceText)
-    } else if (element.nodeType === Text.TEXT_NODE) {
-      element.textContent = element.textContent.replace(textToReplace)
-    } */
+async function replaceHybrid (element) {
+  /*
+  Translate all short sentences and some words within larger sentences
+    -> What is a short sentence?
+      -> Start with anything shorter than 10 and scale it up.
 
-    //console.log("replaceText function is working")
-    const paragraphs = element.getElementsByTagName("p")
-    for (let para of paragraphs) {
-        words = para.innerText
-        words = words.split(REGEX)
-        words = await Promise.all(words.map(async (word) => {
-          let randInt = Math.floor(Math.random() * FREQUENCY) + 1;
-          if (randInt == 1) {
-              const newWord = await processWord(word);
-              return newWord;
-          } else {
-              return word;
-          }
-      }))
-        //console.log("ChatGPT code: ", words)
-        words = words.join(JOIN)
-        para.innerText = words
-    }}
+  No two words directly following one another in the "large" sentences
+  */
+
+  // Chunk the document body into paragraphs.
+
+  // Go through each sentence and determine if it's long or short
+  // If short: translate and replace.
+  // else: go word for word and use the hybrid freq, but skip the next word if we need to 
+
+  // I think the skeleton for this is replaceSentence and modify as needed
+  const paragraphs = element.getElementsByTagName("p")
+
+  for (let para of paragraphs) {
+    rawSentences = para.innerText.split(sentenceRegexFIXED)
+    para.innerText = ''
+
+    rawSentences.forEach(chunk => {
+      let span = document.createElement('span')
+      span.textContent = chunk + " "
+      span.classList.add('chunk')
+      para.appendChild(span)
+    })
+  }
+
+    const chunks = document.querySelectorAll('.chunk')
+
+    const processChunks = async () => {
+      const promises = Array.from(chunks).map(async (chunk) => {
+        chunkWordCount = chunk.innerText.split(" ").length
+
+        if (chunkWordCount <= SHORT_LENGTH) {
+            console.log("SHORT SENTENCE FOUND")
+            const beforeText = chunk.textContent
+            chunk.setAttribute('before', beforeText)
+            chunk.textContent = await processWord(chunk.textContent)
+            chunk.classList.add("translation")
+        } else {
+
+            // TODO - NO TWO CONSECUTIVE WORDS
+
+            // Go through the chunk inner text and check each word individually. Use the trad for loop with the promise que
+            let words = chunk.innerText.split(wordRegex)
+            words = await Promise.all(words.map(async (word) => {
+                let random = Math.floor(Math.random() * 101)
+                if (random < FREQUENCY) {
+                    const newWord = await processWord(word)
+                    return ('<span class="translation" before=' + word + '>' + newWord + "</span>")
+                } else {
+                    return word
+                }
+            }))
+
+            words = words.join(' ')
+            chunk.innerText = ''
+            chunk.innerHTML = words
+        }
+      })
+        await Promise.all(promises);
+        addHighlightsAndPopup();
+    }
+    processChunks()
+  }
+
+
+
+            
+      
     
+  
+    //const promises = []
+    // promises.push(aysncFunction(item))
+    //await Promise.all(promises)
+
+    // We can read it left to right and replace whenever we fulfill the next promise. This would streamline everything...
+  
+
+async function replaceSentence (element) {
+    const paragraphs = element.getElementsByTagName("p")
+   
+    for (let para of paragraphs) {
+      words = para.innerText.split(sentenceRegexFIXED)
+      //words = words.split(REGEX)
+      console.log("Split up paragraph looks like: ", words)
+      para.innerText = ''
+
+      words.forEach(chunk => {
+        let span = document.createElement('span')
+        span.textContent = chunk + " "
+        span.classList.add('chunk')
+        para.appendChild(span)
+      })
+
+    }
+ 
+    const chunks = document.querySelectorAll('.chunk')
+     /* chunks.forEach(async chunk => {
+      let random = Math.floor(Math.random() * 101)
+      if (random < FREQUENCY) {
+        console.log(random, " was less than ", FREQUENCY, " so this was a hit")
+        const beforeText = chunk.textContent
+        chunk.textContent = await processWord(chunk.textContent)
+        chunk.classList.add('translation')
+      }
+    }) 
 
 
+    addHighlightsAndPopup() */
+    const processChunks = async () => {
+      const promises = Array.from(chunks).map(async (chunk) => {
+        let random = Math.floor(Math.random() * 101);
+        if (random < FREQUENCY) {
+          console.log(random, " was less than ", FREQUENCY, " so this was a hit");
+          const beforeText = chunk.textContent;
+          chunk.setAttribute('before', beforeText)
+          chunk.textContent = await processWord(chunk.textContent);
+          chunk.classList.add('translation');
+        }
+      });
+    
+      await Promise.all(promises);
+      addHighlightsAndPopup();
+    }
+    processChunks()
+  }
+
+// We can refactor this - replace functions just mark necessary elements as what we want, and the 
+// one that adds hover class can handle translation - what structure would I need to be able to dynamically update the page?
+
+async function replaceWord(element){
+  console.log("Triggered replaceWord")
+  // I only need to mark a span around the given words
+  const paragraphs = element.getElementsByTagName("p")
+
+  for (let para of paragraphs) { 
+    //const originalWords = para.innerText
+    words = para.innerText.split(wordRegex)
+    words = await Promise.all(words.map(async (word) => {
+      let random = Math.floor(Math.random() * 101)
+      if (random < FREQUENCY) {
+        //const beforeText = word
+        const newWord = await processWord(word);
+        return ('<span class="translation" before=' +  word +  '>' +  newWord +  "</span>");
+      } else {
+        return word;
+      }
+    }))
+
+    words = words.join(' ')
+    para.innerHTML = words
+
+    addHighlightsAndPopup()
+
+  }
+}
+
+/*
+We broke word mode.
+
+
+May benefit from creating two different functions, one for word and one for sentence
+  -> I have a feeling the structure of the two need to be fundamentally different.
+
+
+NLP can be used to make this work better, potentially - worth looking in to
+
+Right now we eat hyperlinks - let's try to fix that
+*/
+
+/*
+Putting spans into an existing fella
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the paragraph element
+    const paragraph = document.getElementById('myParagraph');
+
+    // Create a new span element
+    const span = document.createElement('span');
+    span.textContent = ' HERE ARE TRANSLATED WORDS ';
+
+    // Find the position to insert the span
+    const textNode = paragraph.firstChild;
+    const insertionPoint = "Example text we're gonna keep going hooooh boy".length;
+
+    // Split the text node at the insertion point
+    const beforeText = textNode.textContent.substring(0, insertionPoint);
+    const afterText = textNode.textContent.substring(insertionPoint);
+
+    // Create text nodes for the split text
+    const beforeTextNode = document.createTextNode(beforeText);
+    const afterTextNode = document.createTextNode(afterText);
+
+    // Clear the original paragraph content
+    paragraph.textContent = '';
+
+    // Append the nodes in the correct order
+    paragraph.appendChild(beforeTextNode);
+    paragraph.appendChild(span);
+    paragraph.appendChild(afterTextNode);
+});
+*/
+
+function addHighlightsAndPopup() {
+  const translations = document.querySelectorAll('.translation')
+  console.log(translations)
+  console.log("Triggered highlights and popup")
+
+  translations.forEach( element => {
+    element.addEventListener('mouseover', function(event) {
+      console.log("Triggered mouseover")
+      let hoverPopup = document.createElement("div")
+      hoverPopup.innerText = element.getAttribute("before")
+      hoverPopup.classList.add('hoverPopup')
+
+      document.body.appendChild(hoverPopup)
+
+      // Follows the cursor around but get's buggy when it nearly hits the wall
+       element.addEventListener('mousemove', function(event) {
+        const x = event.clientX
+        const y = event.clientY + window.scrollY
+
+        hoverPopup.style.left = (event.clientX + 10) + 'px'
+        hoverPopup.style.top = (event.clientY + window.scrollY + 10) + 'px'
+    })
+
+    element.addEventListener("mouseout", function(event) {
+      console.log("Moused off, baby")
+      let existingPopup = document.body.querySelector('.hoverPopup')
+      if (existingPopup) {
+        existingPopup.remove()
+      }
+    })
+  })
+
+  })
+}

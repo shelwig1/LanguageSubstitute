@@ -12,7 +12,7 @@ console.log("Background working")
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.word) {
-        translateCall(request.word).then(sendResponse)
+        translateCall(request.word, request.targetLanguage).then(sendResponse)
         return true
     }
     
@@ -30,24 +30,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
  */        
 // Add in the target language we want -> should be able to pull it from the storage we're using
-async function translateCall(data) {
+async function translateCall(data, targetLanguage) {
     //console.log("Background - translateCall - data received: ", JSON.stringify(data))
 
     // Right way to access the target language but not the right way to poll it - have it poll every time it changes
-    chrome.storage.local.get(["targetLanguage"]).then((result) => {
-        targetLanguage = result.targetLanguage;
-      });
-
     //console.log(targetLanguage)
-    //console.log("Target language: ", targetLanguage)
-
+    console.log("BACKGROUND - translateCall - Target language: ", targetLanguage)
+    
     // TEST CODE, can die if needed
-    const testData = [data, targetLanguage]
-    console.log("TEST DATA: ", testData)
+    //const testData = [data, targetLanguage]
+    //console.log("TEST DATA: ", testData)
     // END TEST CODE
 
 
-    const arrayData = [data]
+    const arrayData = [data, targetLanguage]
     const response = await fetch (SERVER, {
         method: "POST",
         headers: {
