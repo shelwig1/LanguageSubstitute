@@ -1,8 +1,9 @@
-var sentenceRegex = /[.!?]+/
-var sentenceRegexFIXED = /(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!|;)\s/
-var wordRegex = /\s/
-var sentenceJoin = ". "
-var wordJoin = " "
+const sentenceRegex = /[.!?]+/
+const sentenceRegexFIXED = /(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!|;)\s/
+const wordRegex = /\s/
+const punctuationRegex = /[!"#$%&'()*+,-./:;<=>?@[\\\]^_`{|}~]/
+const sentenceJoin = ". "
+const wordJoin = " "
 var FREQUENCY = 10
 var on
 var REGEX;
@@ -10,6 +11,24 @@ var JOIN;
 var language;
 
 const SHORT_LENGTH = 10
+
+//const blacklist = ["the","a","of","it","he","her","him","she","be","to","and","in","that","i","as"]
+const blacklist = new Set([
+    'the',
+    'a',
+    'of',
+    'it',
+    'he','her','him','she',
+    'be',
+    'to',
+    'and',
+    'in',
+    'that',
+    'i',
+    'as',
+    'so',
+    '-'
+])
 
 console.log("Starting content.js")
 
@@ -65,86 +84,67 @@ function sendMessageToBackground(message) {
   }   
 
 async function replaceHybrid (element) {
-  /*
-  Translate all short sentences and some words within larger sentences
-    -> What is a short sentence?
-      -> Start with anything shorter than 10 and scale it up.
-
-  No two words directly following one another in the "large" sentences
-  */
-
-  // Chunk the document body into paragraphs.
-
-  // Go through each sentence and determine if it's long or short
-  // If short: translate and replace.
-  // else: go word for word and use the hybrid freq, but skip the next word if we need to 
-
-  // I think the skeleton for this is replaceSentence and modify as needed
   const paragraphs = element.getElementsByTagName("p")
-
   for (let para of paragraphs) {
     rawSentences = para.innerText.split(sentenceRegexFIXED)
-    para.innerText = ''
-
-    rawSentences.forEach(chunk => {
-      let span = document.createElement('span')
-      span.textContent = chunk + " "
-      span.classList.add('chunk')
-      para.appendChild(span)
-    })
-  }
-
-    const chunks = document.querySelectorAll('.chunk')
-
-    const processChunks = async () => {
-      const promises = Array.from(chunks).map(async (chunk) => {
-        chunkWordCount = chunk.innerText.split(" ").length
-
-        if (chunkWordCount <= SHORT_LENGTH) {
-            console.log("SHORT SENTENCE FOUND")
-            const beforeText = chunk.textContent
-            chunk.setAttribute('before', beforeText)
-            chunk.textContent = await processWord(chunk.textContent)
-            chunk.classList.add("translation")
-        } else {
-
-            // TODO - NO TWO CONSECUTIVE WORDS
-
-            // Go through the chunk inner text and check each word individually. Use the trad for loop with the promise que
-            let words = chunk.innerText.split(wordRegex)
-            words = await Promise.all(words.map(async (word) => {
-                let random = Math.floor(Math.random() * 101)
-                if (random < FREQUENCY) {
-                    const newWord = await processWord(word)
-                    return ('<span class="translation" before=' + word + '>' + newWord + "</span>")
-                } else {
-                    return word
-                }
-            }))
-
-            words = words.join(' ')
-            chunk.innerText = ''
-            chunk.innerHTML = words
-        }
-      })
-        await Promise.all(promises);
-        addHighlightsAndPopup();
-    }
-    processChunks()
-  }
-
-
-
-            
-      
+    //para.innerText = ''
     
-  
-    //const promises = []
-    // promises.push(aysncFunction(item))
-    //await Promise.all(promises)
+    // Sanitizes input without scrubbing non-text goodies -> refactor into each method
+    para.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        child.nodeValue = ""
+      }
+    })
 
-    // We can read it left to right and replace whenever we fulfill the next promise. This would streamline everything...
+     rawSentences.forEach(chunk => {
+        let span = document.createElement('span')
+        span.textContent = chunk + " "
+        span.classList.add('chunk')
+        para.appendChild(span)
+    }) 
+  }
+
+  const chunks = document.querySelectorAll('.chunk')
+
+  const processChunks = async () => {
+      const promises = Array.from(chunks).map(async (chunk) => {
+          chunkWordCount = chunk.innerText.split(" ").length
+
+          //if (chunkWordCount <= SHORT_LENGTH) {
+          let random = Math.floor(Math.random() * 101)
+          if (random < FREQUENCY) {
+              console.log("SHORT SENTENCE FOUND")
+              const beforeText = chunk.textContent
+              chunk.setAttribute('before', beforeText)
+              chunk.textContent = await processWord(chunk.textContent)
+              chunk.classList.add("translation")
+          } 
+          
+          else {
+              // TODO - NO TWO CONSECUTIVE WORDS
+              let words = chunk.innerText.split(wordRegex)
+              words = await Promise.all(words.map(async (word) => {
+                  let random = Math.floor(Math.random() * 101)
+                  // IF BROKEN, CHECK HERE
+                  if (random < FREQUENCY && !blacklist.has(word.toLowerCase())) {
+                      const newWord = await processWord(word)
+                      return ('<span class="translation" before=' + word + '>' + newWord + "</span>")
+                  } else {
+                      return word
+                  }  
+          })) 
+
+          words = words.join(' ')
+          chunk.innerText = ''
+          chunk.innerHTML = words
+          } 
+      })
+    await Promise.all(promises);
+    addHighlightsAndPopup();
+  }
   
+  processChunks()
+}
 
 async function replaceSentence (element) {
     const paragraphs = element.getElementsByTagName("p")
@@ -277,6 +277,11 @@ function addHighlightsAndPopup() {
   console.log("Triggered highlights and popup")
 
   translations.forEach( element => {
+    if (element.getAttribute('before') == "") {
+      element.innerText = ''
+      element.innerHTML = ''
+    }
+
     element.addEventListener('mouseover', function(event) {
       console.log("Triggered mouseover")
       let hoverPopup = document.createElement("div")

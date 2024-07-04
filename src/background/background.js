@@ -53,6 +53,11 @@ async function translateCall(data, targetLanguage) {
     })
     const responseData = await response.json()
 
+    // Untranslatable words should bounce back in quotes so we don't fuck up the whole thing - this will still fuck everything up...
+    if (responseData[0] === data) {
+        responseData[0] = '"' + responseData[0] + '"'
+    }
+
     return responseData[0]
 }
 

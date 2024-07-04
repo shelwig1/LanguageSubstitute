@@ -1,3 +1,18 @@
+7/2/24
+TODOs:
+-chunks of words within a sentence -> translate this chunk of X words with some variance for words after that limit
+-do not translate word list
+-fixed seed or page for debugging
+-option to change what counts as a short sentence
+-live update page as we change settings
+
+
+
+
+
+
+
+
 Figure out exactly how exports and modules work.
 
 
