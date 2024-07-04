@@ -27,7 +27,11 @@ const blacklist = new Set([
     'i',
     'as',
     'so',
-    '-'
+    '-',
+    'on',
+    'who',
+    'or',
+    'then'
 ])
 
 console.log("Starting content.js")
@@ -54,8 +58,6 @@ chrome.storage.local.get().then((result) => {
         } else {
           replaceWord(document.body)
         }
-
-
     } else {
         console.log("Extension is off")
     }
@@ -83,24 +85,31 @@ function sendMessageToBackground(message) {
     });
   }   
 
+function clearTextNodes(node) {
+  const tagsToClear =['strong','em']
+  node.childNodes.forEach(child => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      child.nodeValue = ""
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+        if (tagsToClear.includes(child.tagName.toLowerCase())) {
+          child.innerText = ""
+        }
+    }
+    clearTextNodes(child)
+  })
+}
+
 async function replaceHybrid (element) {
   const paragraphs = element.getElementsByTagName("p")
   for (let para of paragraphs) {
     rawSentences = para.innerText.split(sentenceRegexFIXED)
-    //para.innerText = ''
-    
-    // Sanitizes input without scrubbing non-text goodies -> refactor into each method
-    para.childNodes.forEach(child => {
-      if (child.nodeType === Node.TEXT_NODE) {
-        child.nodeValue = ""
-      }
-    })
+    clearTextNodes(para)
 
-     rawSentences.forEach(chunk => {
-        let span = document.createElement('span')
-        span.textContent = chunk + " "
-        span.classList.add('chunk')
-        para.appendChild(span)
+    rawSentences.forEach(chunk => {
+      let span = document.createElement('span')
+      span.textContent = chunk + " "
+      span.classList.add('chunk')
+      para.appendChild(span)
     }) 
   }
 
