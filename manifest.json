@@ -1,16 +1,12 @@
 {
     "manifest_version": 3,
-    "name": "Language Substituter",
-    "version": "0.1.0",
+    "name": "LTICS - Language Translator I Can't Share",
+    "version": "0.2.0",
     "permissions": [
         "activeTab",
         "scripting",
-        "storage"
-    ],
-    "host_permissions": [
-        "<all_urls>",
-        "http://localhost:*/*",
-        "https://localhost:*/*"
+        "storage",
+        "identity"
     ],
     "background": {
         "service_worker": "./src/background/background.js",
@@ -22,12 +18,6 @@
             "js": ["./src/content/content.js"],
             "css": ["./src/content/content.css"],
             "type":"module"
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": ["freqList.json"],
-            "matches": ["<all_urls>"]            
         }
     ],
     "action": {
