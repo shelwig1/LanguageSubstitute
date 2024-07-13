@@ -18,27 +18,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     
 })
 
-    /*    if (request.word) {
-         translateCall(request.word)
-            .then(processedWord => {
-                sendResponse("Testicle test response data SUGMA")
-                console.log("SENT RESPONSE TO CONTENT")
-            })
-            .catch(error => {
-                sendResponse({error : error.message})
-            })
-    }
- */  
-
-function getUserInfo() {
-    chrome.identity.getProfileUserInfo((userInfo) => {
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError)
-            return
-        }
-        console.log("User info: ", userInfo)
-    })
-}
 
 // Add in the target language we want -> should be able to pull it from the storage we're using
 async function translateCall(data, targetLanguage) {
@@ -88,7 +67,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         chrome.scripting.executeScript({
             target: {tabId : tab.id},
             files: ['./src/content/content.js']
-            //files: ['content.js']
         })
 
         chrome.scripting.insertCSS({
