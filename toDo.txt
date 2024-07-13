@@ -1,5 +1,5 @@
 7/13/24
--Reconfigure project to remove host permissions.
+-Reconfigure project to remove host permissions -> 
 
 7/2/24
 TODOs:
