@@ -28,7 +28,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 sendResponse({error : error.message})
             })
     }
- */        
+ */  
+
+function getUserInfo() {
+    chrome.identity.getProfileUserInfo((userInfo) => {
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError)
+            return
+        }
+        console.log("User info: ", userInfo)
+    })
+}
+
 // Add in the target language we want -> should be able to pull it from the storage we're using
 async function translateCall(data, targetLanguage) {
     //console.log("Background - translateCall - data received: ", JSON.stringify(data))
@@ -76,8 +87,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tab.active && changeInfo.status === 'complete') {
         chrome.scripting.executeScript({
             target: {tabId : tab.id},
-            files: ['content.js']
+            files: ['./src/content/content.js']
+            //files: ['content.js']
         })
+
+        chrome.scripting.insertCSS({
+            target: {tabId : tab.id},
+            files: ['./src/content/content.css']
+        })
+
+        getUserInfo()
     }
 
 })

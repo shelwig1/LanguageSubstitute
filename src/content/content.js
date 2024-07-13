@@ -31,7 +31,10 @@ const blacklist = new Set([
     'on',
     'who',
     'or',
-    'then'
+    'then',
+    'you',
+    'how',
+    'not'
 ])
 
 console.log("Starting content.js")
@@ -58,6 +61,8 @@ chrome.storage.local.get().then((result) => {
         } else {
           replaceWord(document.body)
         }
+
+
     } else {
         console.log("Extension is off")
     }
@@ -87,6 +92,7 @@ function sendMessageToBackground(message) {
 
 function clearTextNodes(node) {
   const tagsToClear =['strong','em']
+
   node.childNodes.forEach(child => {
     if (child.nodeType === Node.TEXT_NODE) {
       child.nodeValue = ""
@@ -98,18 +104,18 @@ function clearTextNodes(node) {
     clearTextNodes(child)
   })
 }
-
+  
 async function replaceHybrid (element) {
   const paragraphs = element.getElementsByTagName("p")
   for (let para of paragraphs) {
     rawSentences = para.innerText.split(sentenceRegexFIXED)
     clearTextNodes(para)
-
-    rawSentences.forEach(chunk => {
-      let span = document.createElement('span')
-      span.textContent = chunk + " "
-      span.classList.add('chunk')
-      para.appendChild(span)
+    //para.innerText = ''
+     rawSentences.forEach(chunk => {
+        let span = document.createElement('span')
+        span.textContent = chunk + " "
+        span.classList.add('chunk')
+        para.appendChild(span)
     }) 
   }
 
@@ -117,12 +123,8 @@ async function replaceHybrid (element) {
 
   const processChunks = async () => {
       const promises = Array.from(chunks).map(async (chunk) => {
-          chunkWordCount = chunk.innerText.split(" ").length
-
-          //if (chunkWordCount <= SHORT_LENGTH) {
           let random = Math.floor(Math.random() * 101)
           if (random < FREQUENCY) {
-              console.log("SHORT SENTENCE FOUND")
               const beforeText = chunk.textContent
               chunk.setAttribute('before', beforeText)
               chunk.textContent = await processWord(chunk.textContent)
@@ -130,11 +132,9 @@ async function replaceHybrid (element) {
           } 
           
           else {
-              // TODO - NO TWO CONSECUTIVE WORDS
               let words = chunk.innerText.split(wordRegex)
               words = await Promise.all(words.map(async (word) => {
                   let random = Math.floor(Math.random() * 101)
-                  // IF BROKEN, CHECK HERE
                   if (random < FREQUENCY && !blacklist.has(word.toLowerCase())) {
                       const newWord = await processWord(word)
                       return ('<span class="translation" before=' + word + '>' + newWord + "</span>")
@@ -234,59 +234,13 @@ async function replaceWord(element){
   }
 }
 
-/*
-We broke word mode.
-
-
-May benefit from creating two different functions, one for word and one for sentence
-  -> I have a feeling the structure of the two need to be fundamentally different.
-
-
-NLP can be used to make this work better, potentially - worth looking in to
-
-Right now we eat hyperlinks - let's try to fix that
-*/
-
-/*
-Putting spans into an existing fella
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Select the paragraph element
-    const paragraph = document.getElementById('myParagraph');
-
-    // Create a new span element
-    const span = document.createElement('span');
-    span.textContent = ' HERE ARE TRANSLATED WORDS ';
-
-    // Find the position to insert the span
-    const textNode = paragraph.firstChild;
-    const insertionPoint = "Example text we're gonna keep going hooooh boy".length;
-
-    // Split the text node at the insertion point
-    const beforeText = textNode.textContent.substring(0, insertionPoint);
-    const afterText = textNode.textContent.substring(insertionPoint);
-
-    // Create text nodes for the split text
-    const beforeTextNode = document.createTextNode(beforeText);
-    const afterTextNode = document.createTextNode(afterText);
-
-    // Clear the original paragraph content
-    paragraph.textContent = '';
-
-    // Append the nodes in the correct order
-    paragraph.appendChild(beforeTextNode);
-    paragraph.appendChild(span);
-    paragraph.appendChild(afterTextNode);
-});
-*/
-
 function addHighlightsAndPopup() {
   const translations = document.querySelectorAll('.translation')
   console.log(translations)
   console.log("Triggered highlights and popup")
 
   translations.forEach( element => {
-    if (element.getAttribute('before') == "") {
+    if (element.getAttribute('before') == "" || element.getAttribute('before') == " ") {
       element.innerText = ''
       element.innerHTML = ''
     }
