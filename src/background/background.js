@@ -1,21 +1,30 @@
 //const SERVER = 'http://localhost:3000/'
 const SERVER = 'https://vercel-server-test-opal.vercel.app/'
-//const SERVER = 'https://vercel-server-test-opal.vercel.app/'
-//const SERVER = 'language-substitute.vercel.app'
+//const SERVER = 'https://vercel-server-test-shelwig1-seans-projects-e8bfcdac.vercel.app/'
 const url = chrome.runtime.getURL('freqList.json')
 let words
 let freqCutoff
 let onOff = true
 let targetLanguage
+
+//import { generateUniqueRandomId } from "./UUIDtest"
+
 console.log("Background working")
 
+chrome.runtime.onInstalled.addListener(function(details) {
+    if (details.reason === 'install') {
+        // Perform actions on install
+        const newUUID = generateUniqueRandomId()
+
+        chrome.storage.local.set({UUID : newUUID})
+    }
+})
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.word) {
         translateCall(request.word, request.targetLanguage).then(sendResponse)
         return true
     }
-    
 })
 
 
@@ -37,7 +46,8 @@ async function translateCall(data, targetLanguage) {
     const response = await fetch (SERVER, {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-UUID': 'Sean Helwig'
         },
         body: JSON.stringify(arrayData)
     })
@@ -73,8 +83,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             target: {tabId : tab.id},
             files: ['./src/content/content.css']
         })
-
-        getUserInfo()
     }
 
 })
