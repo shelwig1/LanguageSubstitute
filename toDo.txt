@@ -1,0 +1,88 @@
+7/13/24
+-Reconfigure project to remove host permissions -> 
+
+7/2/24
+TODOs:
+-chunks of words within a sentence -> translate this chunk of X words with some variance for words after that limit
+-do not translate word list
+-fixed seed or page for debugging
+-option to change what counts as a short sentence
+-live update page as we change settings
+-website blacklist
+-website whitelist
+
+
+
+
+
+
+
+
+
+
+
+Figure out exactly how exports and modules work.
+
+
+Create popup interface
+    -> design mockup for what it should do
+
+Check if word replace works with Arabic (god help us if not)
+
+Useful links:
+https://developer.chrome.com/docs/extensions/develop/ui/add-popup
+
+https://developer.chrome.com/docs/extensions/develop/ui#popups
+
+Quicker way to search and add the words:
+iterate through the entire article and add the words to a hashmap
+If those words show up on the english side of the deal, then we know and can quickly look it up
+
+We're actually doing that either way aren't we...
+
+I don't need to do this cache UP FRONT, but I can implement it as we go forward
+
+Exclusion list for common words
+    -> add highlight and right click to add words to never translate
+Cache for common words
+
+TODO - make translate API work in extension
+    BUNDLING -> Webpack or Browserify
+
+How the fuck would user authentication work if I were to push this out into the wild?
+
+
+Test site:
+https://www.tunera.xyz/fonts/teranoptia/
+
+When we change, we run the script again, but we don't restore the page to its original state
+We can do the stupid way and just save the entire page to local storage, but that makes this fucker huge
+
+
+User authentication over the API to ensure we have valid requests
+
+//////
+
+Handling multiple arabic words translated in a row (reverse em)
+Or, just skip it and do the sentence implementation
+Language selector
+Dynamically turn it on and off
+    -> backups of the page that we flip in between
+
+Translate blacklist -> that, the, he, she, we, etc
+
+Context menu implementation to add words to a block list
+
+________
+
+Can I make transalte API translate brand names?
+Context menu -> untranslate this sentence
+
+
+/// How to implement multiple languages?
+    -> French, Russian
+
+/// Context menu stuff -> save sentence, etc
+
+Translating brand names -> seems to work when we add "" around the word -> may take a given sentence and go work by word, instead of using the sentence regex.
+Word by word, add quotes, take it back, strip the quotes, use it to build the sentence anew.

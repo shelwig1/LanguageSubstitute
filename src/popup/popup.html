@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="popupStyles.css" />
+
+</head>
+<body>
+    <!-- The Doohickey -->
+     L.T.I.C.S. - Language Translator I Can't Share
+    <form id="optionsForm">
+        <div class="toggle-container">
+            <label class="switch"> On/Off
+                <input id="toggle" type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="slide-container">
+            <label>Frequency of Translation</label>
+            <input type="range" min="1" max="100" value ="50" class="slider" id="rangeSlider">
+            <input type="number" id="rangeTyper" min="1" max="100" value="50">
+        </div>
+ 
+        <div class="mode-selector">
+            <label>Mode</label>
+            <select name="Mode" id="mode">
+                <option value="sentence">Sentence</option>
+                <option value="word">Word</option>
+                <option value="hybrid">Hybrid</option>
+            </select>
+        </div>
+        <div class="language-selector">
+            <label>Language</label>
+            <select name="Language" id="language">
+                <option value="ar">Arabic</option>
+                <option value="fr">French</option>
+
+            </select>
+        </div>
+
+        <div id='exportButton' class="exportButton">
+            <button>Export</button>
+        </div>
+    </form>
+</body>
+</html>

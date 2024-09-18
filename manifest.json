@@ -1,0 +1,26 @@
+{
+    "manifest_version": 3,
+    "name": "LTICS - Language Translator I Can't Share",
+    "version": "0.2.0",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "storage",
+        "identity"
+    ],
+    "background": {
+        "service_worker": "./src/background/background.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["./src/content/content.js"],
+            "css": ["./src/content/content.css"],
+            "type":"module"
+        }
+    ],
+    "action": {
+        "default_popup":"./src/popup/popup.html"
+    }
+}
