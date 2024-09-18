@@ -245,6 +245,12 @@ function addHighlightsAndPopup() {
       element.innerHTML = ''
     }
 
+    element.addEventListener('click', function(event) {
+      console.log("Clicked the element")
+      element.classList.toggle('saved')
+      saveChunk(element)
+    })
+
     element.addEventListener('mouseover', function(event) {
       console.log("Triggered mouseover")
       let hoverPopup = document.createElement("div")
@@ -272,4 +278,26 @@ function addHighlightsAndPopup() {
   })
 
   })
+}
+
+function saveChunk(element) {
+  // add the chunk's english text and foreign text into a local cache
+  // be able to export that 
+
+  // Create a popup page where we display all the saved data
+  // Same problem as the one where we save the website
+
+
+  // access the properties we want
+  const english = element.getAttribute('before')
+  const translation = element.innerText
+
+  // How do we deal with punctuation? - if it's ,?.! we strip the fucker - if it's not a letter, we strip it - kill whitespace at the beginning and end, only accept letters
+
+  // Also pull the language so we don't fuck shit up here
+  // Save this to local storage until we export it - once we export it, stop giving a fuck?
+
+  // Want to avoid repeats, so let's add it to a database and query it before we let the person rip it again
+
+  // Whenever we translate, we check if it's a saved word and if it is, we let it lie
 }

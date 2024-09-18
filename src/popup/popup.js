@@ -5,6 +5,7 @@ let slider;
 let typer;
 let toggle;
 let form
+let exportButton
 
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Event listener working.")
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     typer = document.getElementById("rangeTyper")
     toggle = document.getElementById("toggle")
     form = document.getElementById("optionsForm") 
+    exportButton = document.getElementById('exportButton')
     let mode = document.getElementById("mode")
     let targetLanguage = document.getElementById("language")
    chrome.storage.local.get().then(( result) =>{
@@ -29,6 +31,11 @@ document.addEventListener("DOMContentLoaded", function() {
     /* form.addEventListener("input" ,function (event) {
         console.log("Form event: ", event.target.id)
     }) */
+    exportButton.addEventListener("click", function(event) {
+        event.preventDefault()
+        console.log("Clicked export button")
+    })
+
     mode.addEventListener("input", function(event) {
         console.log("Mode value:", mode.value)
         chrome.storage.local.set({mode : mode.value})
